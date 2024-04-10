@@ -5,6 +5,10 @@
 .env
 
 
+/a
+
+
+
 # Logs
 logs
 *.log
