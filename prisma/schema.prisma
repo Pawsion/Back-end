@@ -83,6 +83,7 @@ model user {
   lastName    String        @db.VarChar(45)
   phoneNumber String        @db.VarChar(45)
   email       String        @db.VarChar(45)
+  // TODO String? ?????? Also check if 45 is limit
   password    String?       @db.VarChar(45)
   pet         pet[]
   reservation reservation[]
