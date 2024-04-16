@@ -53,19 +53,37 @@ export class AuthService {
     if (!passwordMatches)
       throw new ForbiddenException('Wrong email or password!');
 
-    // const tokens = await this.getTokens(user.id, user.email);
-    // await this.updateRtHash(user.id, tokens.refresh_token);
-    // return tokens;
+    const tokens = await this.getTokens(user.idUser, user.email);
+    await this.updateRtHash(user.idUser, tokens.refreshToken);
+    return tokens;
   }
 
-  async logout() {
-    // TODO
-    return 0;
+  async logOut(id: number) {
+    // ! updateMany so i can pass in hashedRt not null and prevent logout spam
+    await this.prisma.user.updateMany({
+      where: {
+        idUser: id,
+        hashedRt: { not: null },
+      },
+      data: { hashedRt: null },
+    });
   }
 
-  async refreshToken() {
-    // TODO
-    return 0;
+  async refreshTokens(id: number, refreshToken: string) {
+    const user = await this.prisma.user.findUnique({ where: { idUser: id } });
+
+    if (!user) throw new ForbiddenException(`No user with ID ${id} !`);
+    if (!user.hashedRt)
+      throw new ForbiddenException(`User is compromised! No tokens!`);
+
+    const rtMatches = await bcrypt.compare(refreshToken, user.hashedRt);
+
+    if (!rtMatches)
+      throw new ForbiddenException('You do not have valid credentials!');
+
+    const tokens = await this.getTokens(user.idUser, user.email);
+    await this.updateRtHash(user.idUser, tokens.refreshToken);
+    return tokens;
   }
 
   async updateRtHash(id: number, rt: string) {

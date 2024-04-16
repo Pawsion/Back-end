@@ -17,11 +17,11 @@ export class AuthController {
 
   @Post('logout')
   async logoutLocal() {
-    return await this.authService.logout();
+    return await this.authService.logOut(1);
   }
 
   @Post('refresh')
-  async refreshToken() {
-    return await this.authService.refreshToken();
+  async refreshTokens() {
+    return await this.authService.refreshTokens(1, 'refreshToken');
   }
 }
