@@ -7,6 +7,7 @@ import {
 } from 'class-validator';
 
 export class RegisterDto {
+  // TODO -> create proper DTO to match the database
   @IsString()
   @IsNotEmpty()
   @MinLength(4)
