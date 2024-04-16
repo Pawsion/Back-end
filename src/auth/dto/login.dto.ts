@@ -1,11 +1,17 @@
-import { IsNotEmpty, IsString, MaxLength, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 
 export class LoginDto {
-  @IsString()
+  @IsEmail()
   @MinLength(4)
-  @MaxLength(30)
+  @MaxLength(45)
   @IsNotEmpty()
-  readonly username: string;
+  readonly email: string;
 
   @IsString()
   @MinLength(6)
