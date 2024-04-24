@@ -4,6 +4,8 @@
 
 .env
 
+/a
+yarn.lock
 
 # Logs
 logs
