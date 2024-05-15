@@ -16,6 +16,7 @@ export class AuthService {
     // TODO
     const { password, email, firstName, lastName, phoneNumber } = registerDto;
     const hash = await this.hashData(password);
+    console.log(registerDto);
     const newUser = await this.prisma.user.create({
       data: {
         firstName,
@@ -27,11 +28,11 @@ export class AuthService {
     });
 
     const tokens = await this.getTokens(
-      newUser.idUser,
+      newUser.id,
       newUser.email,
       // newUser.role,
     );
-    await this.updateRtHash(newUser.idUser, tokens.refreshToken);
+    await this.updateRtHash(newUser.id, tokens.refreshToken);
     return tokens;
   }
 
@@ -53,16 +54,27 @@ export class AuthService {
     if (!passwordMatches)
       throw new ForbiddenException('Wrong email or password!');
 
-    const tokens = await this.getTokens(user.idUser, user.email);
-    await this.updateRtHash(user.idUser, tokens.refreshToken);
+    const tokens = await this.getTokens(user.id, user.email);
+    await this.updateRtHash(user.id, tokens.refreshToken);
     return tokens;
+  }
+  
+  googleLogin(req) {
+    if (!req.user) {
+      return 'No user from google'
+    }
+
+    return {
+      message: 'User information from google',
+      user: req.user
+    }
   }
 
   async logOut(id: number) {
     // ! updateMany so i can pass in hashedRt not null and prevent logout spam
     await this.prisma.user.updateMany({
       where: {
-        idUser: id,
+        id: id,
         hashedRt: { not: null },
       },
       data: { hashedRt: null },
@@ -70,7 +82,7 @@ export class AuthService {
   }
 
   async refreshTokens(id: number, refreshToken: string) {
-    const user = await this.prisma.user.findUnique({ where: { idUser: id } });
+    const user = await this.prisma.user.findUnique({ where: { id: id } });
 
     if (!user) throw new ForbiddenException(`No user with ID ${id} !`);
     if (!user.hashedRt)
@@ -81,8 +93,8 @@ export class AuthService {
     if (!rtMatches)
       throw new ForbiddenException('You do not have valid credentials!');
 
-    const tokens = await this.getTokens(user.idUser, user.email);
-    await this.updateRtHash(user.idUser, tokens.refreshToken);
+    const tokens = await this.getTokens(user.id, user.email);
+    await this.updateRtHash(user.id, tokens.refreshToken);
     return tokens;
   }
 
@@ -90,7 +102,7 @@ export class AuthService {
     const hash = await this.hashData(rt);
     await this.prisma.user.update({
       where: {
-        idUser: id,
+        id: id,
       },
       data: {
         hashedRt: hash,
