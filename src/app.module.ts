@@ -7,9 +7,10 @@ import { UsersModule } from './users/users.module';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { GlobalExceptionFilter } from './shared/exceptions';
 import { AtGuard } from './shared/guards';
+import { BlogsModule } from './blogs/blogs.module';
 
 @Module({
-  imports: [AuthModule, PrismaModule, UsersModule],
+  imports: [AuthModule, PrismaModule, UsersModule, BlogsModule],
   controllers: [AppController],
   providers: [
     AppService,

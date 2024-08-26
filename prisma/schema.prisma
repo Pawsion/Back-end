@@ -35,6 +35,11 @@ model pethotel {
   term         term[]
 }
 
+model blog {
+  id      Int     @id @default(autoincrement())
+  content String
+}
+
 model reservation {
   id      Int       @id
   startDate           DateTime? @db.Date
