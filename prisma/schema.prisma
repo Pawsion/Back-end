@@ -30,6 +30,7 @@ model pethotel {
   email        String        @db.VarChar(255)
   location     String        @db.VarChar(255)
   workingHours String        @db.VarChar(255)
+  website      String        @db.VarChar(255)
   reservation  reservation[]
   review       review[]
   term         term[]
